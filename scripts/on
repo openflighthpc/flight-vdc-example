@@ -1,0 +1,27 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+NODEFILE="$DIR/nodes"
+
+NODE="$1"
+
+if [ -z $NODE ] ; then
+    echo "No nodes provided!"
+    exit 1
+fi
+
+status=$(bash $DIR/status $NODE |awk '{print $2}')
+case $status in
+    "running"|"pending")
+        echo "Node in unsupported state ($state), not doing anything"
+        exit 1
+        ;;
+    "stopped")
+        # set to pending
+        sed -i '' -e "s/^$NODE:.*/$NODE: pending/g" $NODEFILE
+        # sleep
+        sleep 30
+        # set to on 
+        sed -i '' -e "s/^$NODE:.*/$NODE: running/g" $NODEFILE
+        ;;
+esac

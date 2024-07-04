@@ -38,9 +38,8 @@ end
 
 def startNode(node_id)
   node_name = getNodeNameById(node_id)
-  unless settings.development?
-    Open3.capture3("/opt/flight/usr/lib/rack-view/scripts/on #{node_name}")
-  end
+  on_script = "scripts/on"
+  Open3.capture3("#{on_script} #{node_name}")
   {
     nodeId: node_id
   }.to_json
@@ -48,9 +47,8 @@ end
 
 def stopNode(node_id)
   node_name = getNodeNameById(node_id)
-  unless settings.development?
-    Open3.capture3("/opt/flight/usr/lib/rack-view/scripts/off #{node_name}")
-  end
+  off_script = "scripts/off" 
+  Open3.capture3("#{off_script} #{node_name}")
   {
     nodeId: node_id
   }.to_json
@@ -102,7 +100,7 @@ def getNodeStatusByName(node_name)
 end
 
 def getNodeStatusesByNames(node_names)
-  return Hash[node_names.map { |node_name| [node_name, ['running', 'stopped', 'pending'].sample] }] if settings.development?
-  stdout, stderr, status = Open3.capture3("/opt/flight/usr/lib/rack-view/scripts/status #{node_names.join(",")}")
+  status_script = "scripts/status"
+  stdout, stderr, status = Open3.capture3("#{status_script} #{node_names.join(",")}")
   return Hash[stdout.split("\n").map {|node_status| node_status.split(': ')}]
 end

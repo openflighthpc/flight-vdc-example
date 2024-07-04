@@ -1,0 +1,19 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+NODEFILE="$DIR/nodes"
+
+NODES="$1"
+
+if [ -z $NODES ] ; then
+    echo "No nodes provided!"
+    exit 1
+fi
+
+for node in $(echo "$NODES" |sed 's/,/ /g') ; do
+    # Check for node in statefile and add if not present
+    if ! grep -sq "^$node:" $NODEFILE ; then
+        echo "$node: running" >> $NODEFILE
+    fi
+    grep "^$node:" $NODEFILE
+done
