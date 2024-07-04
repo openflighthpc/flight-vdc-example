@@ -3,54 +3,6 @@ require 'json'
 require 'yaml'
 
 get '/world' do
-  # initialize
-  unless File.exist?(File.join(Sinatra::Application.root, 'data', 'room.yml'))
-    init = JSON.load_file(File.join(Sinatra::Application.root, 'data', 'init.json'))
-    room = {}.tap do |r|
-      totalRackNumber = 0;
-      r['clusters'] = []
-      init['clusters'].each do |cluster|
-        roomCluster = {}.tap do |rc|
-          rc['id'] = cluster['id']
-          rc['racks'] = []
-          groupedNodes = cluster['nodes'].group_by {|node| node['type']}
-          loginAndComputeNodeRacks = (groupedNodes['login'] + groupedNodes['compute'].to_a).each_slice(42).to_a
-          loginAndComputeNodeRacks.each do |rack|
-            rack.each_with_index do |node, index|
-              node['index'] = index
-              node['id'] = node['name']
-              node['uNumber'] = 1
-            end
-          end
-          if groupedNodes['storage']
-            storageNodeRacks = groupedNodes['storage'].each_slice(42 / 4).to_a 
-            storageNodeRacks.each do |rack|
-              rack.each_with_index do |node, index|
-                node['index'] = index * 4
-                node['id'] = node['name']
-                node['uNumber'] = 4
-              end
-            end
-          end
-          rc['racks'] = (loginAndComputeNodeRacks + storageNodeRacks.to_a).map do |rack|
-            {'nodes' => rack}
-          end
-          rc['tileIndex'] = {
-            'x': 5 + totalRackNumber,
-            'z': 5
-          }
-        end
-        r['clusters'].push(roomCluster)
-        totalRackNumber += roomCluster['racks'].length
-      end
-      r['roomSize'] = {
-        'horizontalTileNumber' => totalRackNumber + 10,
-        'verticalTileNumber' => 11
-      }
-    end
-    File.open(File.join(Sinatra::Application.root, 'data', 'room.yml'), 'w') { |file| file.write(room.to_yaml) }
-  end
-
   room = YAML.load_file(File.join(Sinatra::Application.root, 'data', 'room.yml'))
   node_names = room['clusters'].map {|cluster| cluster['racks']}.flatten.map {|rack| rack['nodes']}.flatten.map{|node| node['name']}
   node_statuses = getNodeStatusesByNames(node_names)
