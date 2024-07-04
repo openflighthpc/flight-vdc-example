@@ -1,0 +1,273 @@
+---
+clusters:
+- id: my_cluster
+  racks:
+  - nodes:
+    - name: login1
+      type: login
+      index: 0
+      id: login1
+      uNumber: 1
+    - name: compute1
+      type: compute
+      index: 1
+      id: compute1
+      uNumber: 1
+    - name: compute2
+      type: compute
+      index: 2
+      id: compute2
+      uNumber: 1
+    - name: compute3
+      type: compute
+      index: 3
+      id: compute3
+      uNumber: 1
+    - name: compute4
+      type: compute
+      index: 4
+      id: compute4
+      uNumber: 1
+    - name: compute5
+      type: compute
+      index: 5
+      id: compute5
+      uNumber: 1
+    - name: compute6
+      type: compute
+      index: 6
+      id: compute6
+      uNumber: 1
+    - name: compute7
+      type: compute
+      index: 7
+      id: compute7
+      uNumber: 1
+    - name: compute8
+      type: compute
+      index: 8
+      id: compute8
+      uNumber: 1
+    - name: compute9
+      type: compute
+      index: 9
+      id: compute9
+      uNumber: 1
+    - name: compute10
+      type: compute
+      index: 10
+      id: compute10
+      uNumber: 1
+    - name: compute11
+      type: compute
+      index: 11
+      id: compute11
+      uNumber: 1
+    - name: compute12
+      type: compute
+      index: 12
+      id: compute12
+      uNumber: 1
+    - name: compute13
+      type: compute
+      index: 13
+      id: compute13
+      uNumber: 1
+    - name: compute14
+      type: compute
+      index: 14
+      id: compute14
+      uNumber: 1
+    - name: compute15
+      type: compute
+      index: 15
+      id: compute15
+      uNumber: 1
+    - name: compute16
+      type: compute
+      index: 16
+      id: compute16
+      uNumber: 1
+    - name: compute17
+      type: compute
+      index: 17
+      id: compute17
+      uNumber: 1
+    - name: compute18
+      type: compute
+      index: 18
+      id: compute18
+      uNumber: 1
+    - name: compute19
+      type: compute
+      index: 19
+      id: compute19
+      uNumber: 1
+    - name: compute20
+      type: compute
+      index: 20
+      id: compute20
+      uNumber: 1
+    - name: compute21
+      type: compute
+      index: 21
+      id: compute21
+      uNumber: 1
+    - name: compute22
+      type: compute
+      index: 22
+      id: compute22
+      uNumber: 1
+    - name: compute23
+      type: compute
+      index: 23
+      id: compute23
+      uNumber: 1
+    - name: compute24
+      type: compute
+      index: 24
+      id: compute24
+      uNumber: 1
+    - name: compute25
+      type: compute
+      index: 25
+      id: compute25
+      uNumber: 1
+    - name: compute26
+      type: compute
+      index: 26
+      id: compute26
+      uNumber: 1
+    - name: compute27
+      type: compute
+      index: 27
+      id: compute27
+      uNumber: 1
+    - name: compute28
+      type: compute
+      index: 28
+      id: compute28
+      uNumber: 1
+    - name: compute29
+      type: compute
+      index: 29
+      id: compute29
+      uNumber: 1
+    - name: compute30
+      type: compute
+      index: 30
+      id: compute30
+      uNumber: 1
+    - name: compute31
+      type: compute
+      index: 31
+      id: compute31
+      uNumber: 1
+    - name: compute32
+      type: compute
+      index: 32
+      id: compute32
+      uNumber: 1
+    - name: compute33
+      type: compute
+      index: 33
+      id: compute33
+      uNumber: 1
+    - name: compute34
+      type: compute
+      index: 34
+      id: compute34
+      uNumber: 1
+    - name: compute35
+      type: compute
+      index: 35
+      id: compute35
+      uNumber: 1
+    - name: compute36
+      type: compute
+      index: 36
+      id: compute36
+      uNumber: 1
+    - name: compute37
+      type: compute
+      index: 37
+      id: compute37
+      uNumber: 1
+    - name: compute38
+      type: compute
+      index: 38
+      id: compute38
+      uNumber: 1
+  - nodes:
+    - name: storage1
+      type: storage
+      index: 0
+      id: storage1
+      uNumber: 4
+    - name: storage2
+      type: storage
+      index: 4
+      id: storage2
+      uNumber: 4
+    - name: storage3
+      type: storage
+      index: 8
+      id: storage3
+      uNumber: 4
+    - name: storage4
+      type: storage
+      index: 12
+      id: storage4
+      uNumber: 4
+    - name: storage5
+      type: storage
+      index: 16
+      id: storage5
+      uNumber: 4
+    - name: storage6
+      type: storage
+      index: 20
+      id: storage6
+      uNumber: 4
+    - name: storage7
+      type: storage
+      index: 24
+      id: storage7
+      uNumber: 4
+    - name: storage8
+      type: storage
+      index: 28
+      id: storage8
+      uNumber: 4
+    - name: storage9
+      type: storage
+      index: 32
+      id: storage9
+      uNumber: 4
+    - name: storage10
+      type: storage
+      index: 36
+      id: storage10
+      uNumber: 4
+  - nodes:
+    - name: storage11
+      type: storage
+      index: 0
+      id: storage11
+      uNumber: 4
+    - name: storage12
+      type: storage
+      index: 4
+      id: storage12
+      uNumber: 4
+    - name: storage13
+      type: storage
+      index: 8
+      id: storage13
+      uNumber: 4
+  tileIndex:
+    :x: 5
+    :z: 5
+roomSize:
+  horizontalTileNumber: 13
+  verticalTileNumber: 11
