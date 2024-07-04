@@ -65,13 +65,13 @@ clusters:
       uNumber: 1
     - name: node11
       type: compute
-      index: 30
-      id: node12
+      index: 29
+      id: node11
       uNumber: 2
-    - name: node03
+    - name: node12
       type: compute
-      index: 28
-      id: node03
+      index: 27
+      id: node12
       uNumber: 3
     - name: storage1
       type: storage
