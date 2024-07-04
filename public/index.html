@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Flight VDC Example</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="/vdc.css" />
+	<script type="text/javascript" src="/jquery.3.5.1.min.js"></script>
+</head>
+
+<body>
+	<div id="vdc-wrapper">
+		<div id="room-dom-wrapper">
+			<p id="room-label"></p>
+			<div id="room-menu-wrapper">
+				<p id="room-menu-title"></p>
+				<p id="room-menu-option-reboot-node" class="room-menu-option">reboot node</p>
+				<p id="room-menu-option-start-node" class="room-menu-option">start node</p>
+				<p id="room-menu-option-stop-node" class="room-menu-option">stop node</p>
+			</div>
+		</div>
+	</div>
+
+	<script type="module" src="/flight-vdc-core/src/vdc.js"></script>
+	<script type="text/javascript" src="/main.js"></script>
+</body>
+
+</html>
