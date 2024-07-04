@@ -1,5 +1,7 @@
 # Flight Virtual Data Centre Example
 
+For testing [Flight VDC Core](https://github.com/openflighthpc/flight-vdc-core).
+
 ```
 # Initialise VDC library
 git submodule init
