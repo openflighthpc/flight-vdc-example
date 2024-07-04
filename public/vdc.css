@@ -13,6 +13,13 @@ body {
     src: url("../Quicksand.ttf");
 }
 
+#function_links { 
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    padding: 10px;
+}
+
 #vdc-wrapper {
     position: absolute;
     top: 10%;
