@@ -3,26 +3,86 @@ clusters:
 - id: my_cluster
   racks:
   - nodes:
+    - name: network-switch1
+      type: network
+      index: 41
+      id: network-switch1
+      uNumber: 1
     - name: login1
       type: login
-      index: 41
+      index: 40
       id: login1
       uNumber: 1
     - name: node01
       type: compute
-      index: 40
+      index: 39
       id: node01
       uNumber: 1
     - name: node02
       type: compute
-      index: 39
+      index: 38
       id: node02
-      uNumber: 2
+      uNumber: 1
     - name: node03
       type: compute
       index: 37
       id: node03
+      uNumber: 1
+    - name: node04
+      type: compute
+      index: 36
+      id: node04
+      uNumber: 1
+    - name: node05
+      type: compute
+      index: 35
+      id: node05
+      uNumber: 1
+    - name: node06
+      type: compute
+      index: 34
+      id: node06
+      uNumber: 1
+    - name: node07
+      type: compute
+      index: 33
+      id: node07
+      uNumber: 1
+    - name: node08
+      type: compute
+      index: 32
+      id: node08
+      uNumber: 1
+    - name: node09
+      type: compute
+      index: 31
+      id: node09
+      uNumber: 1
+    - name: node10
+      type: compute
+      index: 30
+      id: node10
+      uNumber: 1
+    - name: node11
+      type: compute
+      index: 30
+      id: node12
+      uNumber: 2
+    - name: node03
+      type: compute
+      index: 28
+      id: node03
       uNumber: 3
+    - name: storage1
+      type: storage
+      index: 7
+      id: storage1
+      uNumber: 4
+    - name: storage2
+      type: storage
+      index: 3
+      id: storage2
+      uNumber: 4
   tileIndex:
     :x: 5
     :z: 5
