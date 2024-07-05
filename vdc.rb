@@ -57,13 +57,16 @@ end
 def moveNode(node_id, target_cluster_id, target_rack_index, target_top_slot_index)
   room = YAML.load_file(File.join(Sinatra::Application.root, 'data', 'room.yml'))
   node = nil
+  #puts "Moving #{node_id} to Rack #{target_rack_index} Slot #{target_top_slot_index}"
   original_rack = room['clusters'].map { |cluster| cluster['racks'] }.flatten.find do |r|
     node = r['nodes'].find { |n| n['id'] == node_id }
   end
   target_rack = room['clusters'].find { |cluster| cluster['id'] = target_cluster_id }['racks'][target_rack_index]
-  target_slot_indices = (target_top_slot_index...(target_top_slot_index + node['uNumber'])).to_a
+  target_slot_indices = (target_top_slot_index...(target_top_slot_index - node['uNumber'])).to_a
+  #puts "Checking for node between #{target_top_slot_index} and #{target_top_slot_index - node['uNumber']}"
   target_slot_occupied = target_rack['nodes'].any? do |n|
-    node_slot_indices = (n['index']...(n['index'] + n['uNumber'])).to_a
+    #puts "#{n['id']} is between slots #{n['index']} and #{n['index'] - n['uNumber']}"
+    node_slot_indices = (n['index']...(n['index'] - n['uNumber'])).to_a
     !(node_slot_indices & target_slot_indices).empty? && n['id'] != node_id
   end 
 
