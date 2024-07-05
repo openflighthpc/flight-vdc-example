@@ -42,6 +42,7 @@ const listenNodeClickOnce = () => {
     if (e.detail.node) {
 
       grabbingNodeDetail = e.detail.node.node;
+      grabbingNodeDetail.rackIndex = e.detail.node.rackIndex;
   
       $('#vdc-wrapper').css('cursor', 'grabbing');
       $('#vdc-wrapper').off('nodehover');
@@ -94,7 +95,8 @@ const listenSlotClickOnce = () => {
       vdcController.unhighlightSlots(slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, grabbingNodeDetail.uNumber);
 
       const nodeIds = vdcController.testSlots(slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, grabbingNodeDetail.uNumber);
-      if (slotClickDetail.slotIndex !== grabbingNodeDetail.index && nodeIds.filter(nodeId => nodeId !== grabbingNodeDetail.id).length === 0){
+      // Ensure not trying to move to same slot in same rack and that destination is empty
+      if ((slotClickDetail.slotIndex !== grabbingNodeDetail.index || slotClickDetail.rackIndex !== grabbingNodeDetail.rackIndex) && nodeIds.filter(nodeId => nodeId !== grabbingNodeDetail.id).length === 0){
   
         const response = await fetch('/node', {
           'method': 'POST',
