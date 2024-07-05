@@ -11,4 +11,5 @@ bundle install
 ruby vdc.rb
 ```
 
-Visit http://localhost:4567/index.html
+Visit http://localhost:4567/index.html and see the following:
+![](img/index.png)
