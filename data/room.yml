@@ -83,6 +83,12 @@ clusters:
       index: 3
       id: storage2
       uNumber: 4
+  - nodes: 
+    - name: network2
+      type: network
+      index: 41
+      id: network2
+      uNumber: 1
   tileIndex:
     :x: 5
     :z: 5
