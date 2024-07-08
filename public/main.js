@@ -271,10 +271,17 @@ const fetchDeterminedNodeStatus = async function(nodeId) {
   return await fetchDeterminedNodeStatus();
 }
 
+async function loadClusterData() { 
+  console.log("Reloading cluster data");
+  const res = await fetch('/world');
+  const vdcRoomData = await res.json();
+  this.vdcController.updateClustersData(vdcRoomData);
+}
+
 window.onload = async function () {
   // read dummy data
   const res = await fetch('/world');
-  const vdcRoomData = await res.json();
+  vdcRoomData = await res.json();
 
   globalThis.vdcController = globalThis.initVDC('vdc-wrapper', vdcRoomData);
   const initialFocusingCluster = vdcRoomData.clusters[0];
@@ -366,5 +373,6 @@ window.onload = async function () {
   listenNodeUnhover();
   listenNodeClickOnce();
   listenNodeContextMenuOnce();
-  
 }
+setInterval(loadClusterData, 10000);
+

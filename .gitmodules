@@ -1,4 +1,4 @@
 [submodule "public/flight-vdc-core"]
 	path = public/flight-vdc-core
 	url = git@github.com:openflighthpc/flight-vdc-core.git
-	branch = experimental/concertim-integration
+	branch = feature/live-update

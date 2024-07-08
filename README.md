@@ -28,3 +28,4 @@ Visit http://localhost:4567 and see the following:
 - Cluster name shown on rack hover (in top-down view)
 - Node name shown on node hover (in cluster view) 
 - Zoom in with mouse wheel
+- Dynamically reloading node layout (any changes to `room.yml` are reflected in front-end session, checked every 10s) 
