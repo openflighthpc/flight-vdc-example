@@ -36,6 +36,7 @@ const listenRackUnhover = () => {
   });
 }
 
+
 const listenNodeHover = () => {
   $('#vdc-wrapper').on('nodehover', (e) => {
     console.log('nodehover' + JSON.stringify(e.detail));
@@ -308,6 +309,10 @@ window.onload = async function () {
         'translate': `${labelTranslateX}px ${labelTranslateY}px`
       });
     })
+  });
+
+  window.addEventListener('wheel', (e) => {
+    this.vdcController.zoom(e.deltaY);
   });
 
   $('#room-menu-option-start-node').on('click', async (e) => {
