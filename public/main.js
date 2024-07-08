@@ -2,6 +2,40 @@ let grabbingNodeDetail = null;
 let contextmenuNodeDetail = null;
 let contextmenuAnchorId = null;
 
+const listenRackHover = () => {
+  $('#vdc-wrapper').on('rackhover', (e) => {
+      console.log('rackhover' + JSON.stringify(e.detail));
+    $('#vdc-wrapper').css('cursor', 'grab');
+    $('#room-label').text(e.detail.clusterId);
+    requestAnimationFrame(() => {
+      $('#room-label').css({
+        'visibility': 'visible',
+        'scale': '1',
+        'opacity': '1',
+        'transition':
+          'scale 96ms ease-in,' +
+          'opacity 96ms ease-in'
+      });
+    })
+  });
+}
+
+const listenRackUnhover = () => {
+  $('#vdc-wrapper').on('rackunhover', (e) => {
+    console.log('rackunhover' + JSON.stringify(e.detail));
+    $('#vdc-wrapper').css('cursor', '');
+
+    requestAnimationFrame(() => {
+      $('#room-label').css({
+        'visibility': '',
+        'scale': '',
+        'opacity': '',
+        'transition': ''
+      });
+    });
+  });
+}
+
 const listenNodeHover = () => {
   $('#vdc-wrapper').on('nodehover', (e) => {
     console.log('nodehover' + JSON.stringify(e.detail));
@@ -321,6 +355,8 @@ window.onload = async function () {
     }
   });
 
+  listenRackHover();
+  listenRackUnhover();
   listenNodeHover();
   listenNodeUnhover();
   listenNodeClickOnce();
