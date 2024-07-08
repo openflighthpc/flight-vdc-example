@@ -2,6 +2,10 @@ require 'sinatra'
 require 'json'
 require 'yaml'
 
+get '/' do
+  send_file File.join(settings.public_folder, 'index.html')
+end
+
 get '/world' do
   room = YAML.load_file(File.join(Sinatra::Application.root, 'data', 'room.yml'))
   node_names = room['clusters'].map {|cluster| cluster['racks']}.flatten.map {|rack| rack['nodes']}.flatten.map{|node| node['name']}
