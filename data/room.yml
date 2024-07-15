@@ -68,11 +68,6 @@ clusters:
       index: 29
       id: node11
       uNumber: 2
-    - name: node12
-      type: compute
-      index: 27
-      id: node12
-      uNumber: 3
     - name: storage1
       type: storage
       index: 7
@@ -83,6 +78,11 @@ clusters:
       index: 3
       id: storage2
       uNumber: 4
+    - name: node12
+      type: compute
+      index: 27
+      id: node12
+      uNumber: 3
   - nodes:
     - name: network2
       type: network
@@ -97,6 +97,29 @@ clusters:
   tileIndex:
     :x: 5
     :z: 5
+- id: old_cluster
+  racks:
+  - nodes:
+    - name: network-switch1
+      type: network
+      index: 41
+      id: network-switch1
+      uNumber: 1
+  - nodes:
+    - name: network-switch2
+      type: network
+      index: 41
+      id: network-switch2
+      uNumber: 1
+  - nodes:
+    - name: network-switch3
+      type: network
+      index: 41
+      id: network-switch3
+      uNumber: 1
+  tileIndex:
+    :x: 4
+    :z: 1
 roomSize:
   horizontalTileNumber: 13
   verticalTileNumber: 11
