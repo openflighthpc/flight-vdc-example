@@ -8,10 +8,6 @@ For testing [Flight VDC Core](https://github.com/openflighthpc/flight-vdc-core).
 # Initialise VDC library
 git submodule init
 
-# Add symbolic link to handle broken structure
-cd public/flight-vdc-core/src
-ln -s ../example/public/r
-
 # Install Web App Dependencies
 bundle install
 ruby vdc.rb
