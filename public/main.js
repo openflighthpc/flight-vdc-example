@@ -1,12 +1,14 @@
 let grabbingNodeDetail = null;
 let contextmenuNodeDetail = null;
 let contextmenuAnchorId = null;
+let hoveredClusterId = null;
 
 const listenRackHover = () => {
   $('#vdc-wrapper').on('rackhover', (e) => {
       console.log('rackhover' + JSON.stringify(e.detail));
+    hoveredClusterId = e.detail.clusterId;
     $('#vdc-wrapper').css('cursor', 'grab');
-    $('#room-label').text(e.detail.clusterId);
+    $('#room-label').text(hoveredClusterId);
     requestAnimationFrame(() => {
       $('#room-label').css({
         'visibility': 'visible',
@@ -36,6 +38,14 @@ const listenRackUnhover = () => {
   });
 }
 
+const listenRackClick = () => { 
+  $('#vdc-wrapper').on('click', (e) => {
+    if (hoveredClusterId) {
+      console.log('Requesting street view for ' + hoveredClusterId);
+      vdcController.requestCameraStreetView(hoveredClusterId);
+    }
+  });
+}
 
 const listenNodeHover = () => {
   $('#vdc-wrapper').on('nodehover', (e) => {
@@ -369,6 +379,7 @@ window.onload = async function () {
 
   listenRackHover();
   listenRackUnhover();
+  listenRackClick();
   listenNodeHover();
   listenNodeUnhover();
   listenNodeClickOnce();
