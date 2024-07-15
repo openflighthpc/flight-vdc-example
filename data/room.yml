@@ -89,6 +89,11 @@ clusters:
       index: 41
       id: network2
       uNumber: 1
+    - name: login2
+      type: login
+      index: 40
+      id: login2
+      uNumber: 5
   tileIndex:
     :x: 5
     :z: 5
