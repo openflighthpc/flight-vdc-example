@@ -1,6 +1,6 @@
 let grabbingNodeDetail = null, contextmenuNodeDetail = null, contextmenuAnchorId = null, hoveredClusterId = null;
 
-// Function for creating labels
+// Function for managing label visibility
 const setLabelVisibility = (visible) => {
   $('#room-label').css({
     'visibility': visible ? 'visible' : '',
@@ -10,22 +10,27 @@ const setLabelVisibility = (visible) => {
   });
 };
 
-const listenRackHover = () => {
-  $('#vdc-wrapper').on('rackhover', (e) => {
-  console.log('rackhover' + JSON.stringify(e.detail));
-  hoveredClusterId = e.detail.clusterId;
+// Function for handling hover events
+const onHover = (e, text, trigger) => {
+  console.log(`Hover Event (${trigger}): ${JSON.stringify(e.detail)}`);
   $('#vdc-wrapper').css('cursor', 'grab');
-  $('#room-label').text(hoveredClusterId);
+  $('#room-label').text(text);
   requestAnimationFrame(() => setLabelVisibility(true));
-  });
-}
+};
 
-const listenRackUnhover = () => {
-  $('#vdc-wrapper').on('rackunhover', (e) => {
-  console.log('rackunhover' + JSON.stringify(e.detail));
+// Function for handling unhover events
+const onUnhover = (e, trigger) => {
+  console.log(`Unhover Event (${trigger}): ${JSON.stringify(e.detail)}`);
   $('#vdc-wrapper').css('cursor', '');
   requestAnimationFrame(() => setLabelVisibility(false));
-  });
+};
+
+// Add listeners for hover and unhover events
+const setupHoverListeners = () => {
+  $('#vdc-wrapper').on('rackhover', (e) => onHover(e, e.detail.clusterId, 'rackhover'));
+  $('#vdc-wrapper').on('rackunhover', (e) => onUnhover(e, 'rackunhover'));
+  $('#vdc-wrapper').on('nodehover', (e) => onHover(e, e.detail.node.name, 'nodehover'));
+  $('#vdc-wrapper').on('nodeunhover', (e) => onUnhover(e, 'nodeunhover'));
 }
 
 const listenRackClick = () => { 
@@ -34,23 +39,6 @@ const listenRackClick = () => {
       console.log('Requesting street view for ' + hoveredClusterId);
       vdcController.requestCameraStreetView(hoveredClusterId);
     }
-  });
-}
-
-const listenNodeHover = () => {
-  $('#vdc-wrapper').on('nodehover', (e) => {
-  console.log('nodehover' + JSON.stringify(e.detail));
-  $('#vdc-wrapper').css('cursor', 'grab');
-  $('#room-label').text(e.detail.node.name);
-  requestAnimationFrame(() => setLabelVisibility(true));
-  });
-}
-
-const listenNodeUnhover = () => {
-  $('#vdc-wrapper').on('nodeunhover', (e) => {
-  console.log('nodeunhover' + JSON.stringify(e.detail));
-  $('#vdc-wrapper').css('cursor', '');
-  requestAnimationFrame(() => setLabelVisibility(false));
   });
 }
 
@@ -121,8 +109,7 @@ const listenSlotClickOnce = () => {
         });
         if (response.ok) {
           vdcController.requestMoveNode(grabbingNodeDetail.id, slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, () => {
-            listenNodeHover();
-            listenNodeUnhover();
+            setupHoverListeners();
             listenNodeClickOnce();
             listenNodeContextMenuOnce();
             vdcController.refreshNodehoverEvent();
@@ -133,8 +120,7 @@ const listenSlotClickOnce = () => {
     }
 
     vdcController.requestPushinNode(grabbingNodeDetail.id, () => {
-      listenNodeHover();
-      listenNodeUnhover();
+      setupHoverListeners();
       listenNodeClickOnce();
       listenNodeContextMenuOnce();
       vdcController.refreshNodehoverEvent();
@@ -215,8 +201,7 @@ const listenNodeContextMenuOnce = () => {
 const closeRoomMenu = function() {
   vdcController.removeAnchor(contextmenuAnchorId);
   $('#vdc-wrapper').off('anchormove');
-  listenNodeHover();
-  listenNodeUnhover();
+  setupHoverListeners();
   listenNodeClickOnce();
   listenNodeContextMenuOnce();
   vdcController.refreshNodehoverEvent();
@@ -338,11 +323,8 @@ window.onload = async function () {
     }
   });
 
-  listenRackHover();
-  listenRackUnhover();
+  setupHoverListeners();
   listenRackClick();
-  listenNodeHover();
-  listenNodeUnhover();
   listenNodeClickOnce();
   listenNodeContextMenuOnce();
 }
