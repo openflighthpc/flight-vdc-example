@@ -1,40 +1,30 @@
-let grabbingNodeDetail = null;
-let contextmenuNodeDetail = null;
-let contextmenuAnchorId = null;
-let hoveredClusterId = null;
+let grabbingNodeDetail = null, contextmenuNodeDetail = null, contextmenuAnchorId = null, hoveredClusterId = null;
+
+// Function for creating labels
+const setLabelVisibility = (visible) => {
+  $('#room-label').css({
+    'visibility': visible ? 'visible' : '',
+    'scale': visible ? '1' : '',
+    'opacity': visible ? '1' : '',
+    'transition': visible ? 'scale 96ms ease-in, opacity 96ms ease-in' : ''
+  });
+};
 
 const listenRackHover = () => {
   $('#vdc-wrapper').on('rackhover', (e) => {
-      console.log('rackhover' + JSON.stringify(e.detail));
-    hoveredClusterId = e.detail.clusterId;
-    $('#vdc-wrapper').css('cursor', 'grab');
-    $('#room-label').text(hoveredClusterId);
-    requestAnimationFrame(() => {
-      $('#room-label').css({
-        'visibility': 'visible',
-        'scale': '1',
-        'opacity': '1',
-        'transition':
-          'scale 96ms ease-in,' +
-          'opacity 96ms ease-in'
-      });
-    })
+  console.log('rackhover' + JSON.stringify(e.detail));
+  hoveredClusterId = e.detail.clusterId;
+  $('#vdc-wrapper').css('cursor', 'grab');
+  $('#room-label').text(hoveredClusterId);
+  requestAnimationFrame(() => setLabelVisibility(true));
   });
 }
 
 const listenRackUnhover = () => {
   $('#vdc-wrapper').on('rackunhover', (e) => {
-    console.log('rackunhover' + JSON.stringify(e.detail));
-    $('#vdc-wrapper').css('cursor', '');
-
-    requestAnimationFrame(() => {
-      $('#room-label').css({
-        'visibility': '',
-        'scale': '',
-        'opacity': '',
-        'transition': ''
-      });
-    });
+  console.log('rackunhover' + JSON.stringify(e.detail));
+  $('#vdc-wrapper').css('cursor', '');
+  requestAnimationFrame(() => setLabelVisibility(false));
   });
 }
 
@@ -49,35 +39,18 @@ const listenRackClick = () => {
 
 const listenNodeHover = () => {
   $('#vdc-wrapper').on('nodehover', (e) => {
-    console.log('nodehover' + JSON.stringify(e.detail));
-    $('#vdc-wrapper').css('cursor', 'grab');
-    $('#room-label').text(e.detail.node.name);
-    requestAnimationFrame(() => {
-      $('#room-label').css({
-        'visibility': 'visible',
-        'scale': '1',
-        'opacity': '1',
-        'transition':
-          'scale 96ms ease-in,' +
-          'opacity 96ms ease-in'
-      });
-    })
+  console.log('nodehover' + JSON.stringify(e.detail));
+  $('#vdc-wrapper').css('cursor', 'grab');
+  $('#room-label').text(e.detail.node.name);
+  requestAnimationFrame(() => setLabelVisibility(true));
   });
 }
 
 const listenNodeUnhover = () => {
   $('#vdc-wrapper').on('nodeunhover', (e) => {
-    console.log('nodeunhover' + JSON.stringify(e.detail));
-    $('#vdc-wrapper').css('cursor', '');
-
-    requestAnimationFrame(() => {
-      $('#room-label').css({
-        'visibility': '',
-        'scale': '',
-        'opacity': '',
-        'transition': ''
-      });
-    });
+  console.log('nodeunhover' + JSON.stringify(e.detail));
+  $('#vdc-wrapper').css('cursor', '');
+  requestAnimationFrame(() => setLabelVisibility(false));
   });
 }
 
@@ -94,14 +67,7 @@ const listenNodeClickOnce = () => {
       $('#vdc-wrapper').off('nodeunhover');
       $('#vdc-wrapper').off('nodecontextmenu');
   
-      requestAnimationFrame(() => {
-        $('#room-label').css({
-          'visibility': '',
-          'scale': '',
-          'opacity': '',
-          'transition': ''
-        });
-      });
+      requestAnimationFrame(() => setLabelVisibility(false));
   
       vdcController.requestLiftNode(grabbingNodeDetail.id);
   
@@ -233,12 +199,7 @@ const listenNodeContextMenuOnce = () => {
         })
       }
 
-      $('#room-label').css({
-        'visibility': '',
-        'scale': '',
-        'opacity': '',
-        'transition': ''
-      });
+      requestAnimationFrame(() => setLabelVisibility(false));
       $('#room-menu-wrapper').css({
         'visibility': 'visible',
         'scale': '1',
