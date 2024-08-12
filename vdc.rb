@@ -8,18 +8,17 @@ end
 
 get '/world' do
   room = YAML.load_file(File.join(Sinatra::Application.root, 'data', 'room.yml'))
-  node_names = room['clusters'].map {|cluster| cluster['racks']}.flatten.map {|rack| rack['nodes']}.flatten.map{|node| node['name']}
-  node_statuses = getNodeStatusesByNames(node_names)
-  room['clusters'].each {|cluster| cluster['racks'].each {|rack| rack['nodes'].each {|node| node['status'] = node_statuses[node['name']]}}}
+  node_ids = room['clusters'].map {|cluster| cluster['racks']}.flatten.map {|rack| rack['nodes']}.flatten.map{|node| node['id']}
+  node_statuses = getNodeStatuses(node_ids)
+  room['clusters'].each {|cluster| cluster['racks'].each {|rack| rack['nodes'].each {|node| node['status'] = node_statuses[node['id']]}}}
   return room.to_json
 end
 
 get '/node' do
   node_id = params['nodeId']
-  node_name = getNodeNameById(node_id)
-  node_status = getNodeStatusByName(node_name)
+  node_status = getNodeStatus(node_id)
   until params['until'].nil? || params['until'].split(',').include?(node_status)
-    node_status = getNodeStatusByName(node_name)
+    node_status = getNodeStatus(node_id)
   end
   {
     nodeId: node_id,
@@ -41,18 +40,16 @@ post '/node' do
 end
 
 def startNode(node_id)
-  node_name = getNodeNameById(node_id)
   on_script = "scripts/on"
-  Open3.capture3("#{on_script} #{node_name}")
+  Open3.capture3("#{on_script} #{node_id}")
   {
     nodeId: node_id
   }.to_json
 end
 
 def stopNode(node_id)
-  node_name = getNodeNameById(node_id)
   off_script = "scripts/off" 
-  Open3.capture3("#{off_script} #{node_name}")
+  Open3.capture3("#{off_script} #{node_id}")
   {
     nodeId: node_id
   }.to_json
@@ -102,12 +99,12 @@ def getNodeNameById(node_id)
   end
 end
 
-def getNodeStatusByName(node_name)
-  return getNodeStatusesByNames([node_name])[node_name]
+def getNodeStatus(node_id)
+  return getNodeStatuses([node_id])[node_id]
 end
 
-def getNodeStatusesByNames(node_names)
+def getNodeStatuses(node_ids)
   status_script = "scripts/status"
-  stdout, stderr, status = Open3.capture3("#{status_script} #{node_names.join(",")}")
+  stdout, stderr, status = Open3.capture3("#{status_script} #{node_ids.join(",")}")
   return Hash[stdout.split("\n").map {|node_status| node_status.split(': ')}]
 end
