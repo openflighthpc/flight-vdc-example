@@ -16,6 +16,9 @@ const onHover = (e, text, trigger) => {
   $('#vdc-wrapper').css('cursor', 'grab');
   $('#room-label').text(text);
   requestAnimationFrame(() => setLabelVisibility(true));
+  if (trigger == 'rackhover' ) {
+    hoveredClusterId = text;
+  }
 };
 
 // Function for handling unhover events
@@ -23,6 +26,9 @@ const onUnhover = (e, trigger) => {
   console.log(`Unhover Event (${trigger}): ${JSON.stringify(e.detail)}`);
   $('#vdc-wrapper').css('cursor', '');
   requestAnimationFrame(() => setLabelVisibility(false));
+  if (trigger == 'rackunhover' ) {
+    hoveredClusterId = null;
+  }
 };
 
 // Add listeners for hover and unhover events
@@ -31,9 +37,8 @@ const setupHoverListeners = () => {
   $('#vdc-wrapper').on('rackunhover', (e) => onUnhover(e, 'rackunhover'));
   $('#vdc-wrapper').on('nodehover', (e) => onHover(e, e.detail.node.name, 'nodehover'));
   $('#vdc-wrapper').on('nodeunhover', (e) => onUnhover(e, 'nodeunhover'));
-}
 
-const listenRackClick = () => { 
+  // Handle street view
   $('#vdc-wrapper').on('click', (e) => {
     if (hoveredClusterId) {
       console.log('Requesting street view for ' + hoveredClusterId);
@@ -307,7 +312,6 @@ window.onload = async function () {
   });
 
   setupHoverListeners();
-  listenRackClick();
   listenNodeClickOnce();
   listenNodeContextMenuOnce();
 }
