@@ -44,7 +44,7 @@ const listenRackClick = () => {
 
 const listenNodeClickOnce = () => {
   $('#vdc-wrapper').one('vdcclick', (e) => {
-    console.log('vdcclick' + JSON.stringify(e.detail));
+    console.log('Node Click Event: ' + JSON.stringify(e.detail));
     if (e.detail.node) {
 
       grabbingNodeDetail = e.detail.node.node;
@@ -61,71 +61,62 @@ const listenNodeClickOnce = () => {
   
       $('#vdc-wrapper').on('slothover', (ev) => {
         const nodeIds = vdcController.testSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber);
-        if (nodeIds.filter(nodeId => nodeId !== grabbingNodeDetail.id).length > 0){
-          vdcController.highlightSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber, false);
-        } else {
-          vdcController.highlightSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber, true);
-
-        }
-      });
-      $('#vdc-wrapper').on('slotunhover', (ev) => {
+        vdcController.highlightSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber, nodeIds.filter(id => id !== grabbingNodeDetail.id).length === 0);
+      }).on('slotunhover', (ev) => {
         vdcController.unhighlightSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber);
       })
       listenSlotClickOnce();
       vdcController.refreshSlothoverEvent();
-
     } else {
       listenNodeClickOnce();
     }
   });
 }
 
-const listenSlotClickOnce = () => {
-  $('#vdc-wrapper').one('vdcclick', async (e) => {
-    console.log('vdcclick' + JSON.stringify(e.detail));
-    const slotClickDetail = e.detail.slot;
+// Handle Slot Clicks
+const handleSlotClick = async (e) => {
+  console.log('Slot Click Event: ' + JSON.stringify(e.detail));
+  const slotClickDetail = e.detail.slot;
+  $('#vdc-wrapper').off('slothover slotunhover').css('cursor', '');
 
-    $('#vdc-wrapper').css('cursor', '');
-    $('#vdc-wrapper').off('slothover');
-    $('#vdc-wrapper').off('slotunhover');
+  if (slotClickDetail) {
+    vdcController.unhighlightSlots(slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, grabbingNodeDetail.uNumber);
 
-    if (slotClickDetail) {
+    const nodeIds = vdcController.testSlots(slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, grabbingNodeDetail.uNumber);
 
-      vdcController.unhighlightSlots(slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, grabbingNodeDetail.uNumber);
+    // Only move if node not being placed back in same place
+    if ((slotClickDetail.slotIndex !== grabbingNodeDetail.index || slotClickDetail.rackIndex !== grabbingNodeDetail.rackIndex) && nodeIds.filter(id => id !== grabbingNodeDetail.id).length === 0) {
+      const response = await fetch('/node', {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'move',
+          nodeId: grabbingNodeDetail.id,
+          targetClusterId: slotClickDetail.clusterId,
+          targetRackIndex: slotClickDetail.rackIndex,
+          targetTopSlotIndex: slotClickDetail.slotIndex,
+        })
+      });
 
-      const nodeIds = vdcController.testSlots(slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, grabbingNodeDetail.uNumber);
-      // Ensure not trying to move to same slot in same rack and that destination is empty
-      if ((slotClickDetail.slotIndex !== grabbingNodeDetail.index || slotClickDetail.rackIndex !== grabbingNodeDetail.rackIndex) && nodeIds.filter(nodeId => nodeId !== grabbingNodeDetail.id).length === 0){
-  
-        const response = await fetch('/node', {
-          'method': 'POST',
-          'body': JSON.stringify({
-            'action': 'move',
-            'nodeId': grabbingNodeDetail.id,
-            'targetClusterId': slotClickDetail.clusterId,
-            'targetRackIndex': slotClickDetail.rackIndex,
-            'targetTopSlotIndex': slotClickDetail.slotIndex,
-          })
-        });
-        if (response.ok) {
-          vdcController.requestMoveNode(grabbingNodeDetail.id, slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, () => {
-            setupHoverListeners();
-            listenNodeClickOnce();
-            listenNodeContextMenuOnce();
-            vdcController.refreshNodehoverEvent();
-          });
-          return;
-        }
+      if (response.ok) {
+        vdcController.requestMoveNode(grabbingNodeDetail.id, slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, resetListeners);
+        return;
       }
     }
+  }
+  vdcController.requestPushinNode(grabbingNodeDetail.id, resetListeners);
+};
 
-    vdcController.requestPushinNode(grabbingNodeDetail.id, () => {
-      setupHoverListeners();
-      listenNodeClickOnce();
-      listenNodeContextMenuOnce();
-      vdcController.refreshNodehoverEvent();
-    });
-  });
+// Helper for resetting listeners
+const resetListeners = () => {
+  setupHoverListeners();
+  listenNodeClickOnce();
+  listenNodeContextMenuOnce();
+  vdcController.refreshNodehoverEvent();
+};
+
+// Slot Click Listener
+const listenSlotClickOnce = () => {
+  $('#vdc-wrapper').one('vdcclick', handleSlotClick);
 }
 
 const listenNodeContextMenuOnce = () => {
@@ -175,15 +166,11 @@ const listenNodeContextMenuOnce = () => {
       })
       // populate available menu options
       $('#room-menu-title').text(e.detail.node.name);
-      if(e.detail.node.status === 'running') {
-        $('#room-menu-option-stop-node').css({
-          'display': 'block'
-        })
-      }else if(e.detail.node.status === 'stopped') {
-        $('#room-menu-option-start-node').css({
-          'display': 'block'
-        })
-      }
+      
+      // Toggle start and stop menus accordingly
+      const isRunning = e.detail.node.status === 'running';
+      $('#room-menu-option-stop-node').toggle(isRunning);
+      $('#room-menu-option-start-node').toggle(!isRunning);
 
       requestAnimationFrame(() => setLabelVisibility(false));
       $('#room-menu-wrapper').css({
@@ -191,8 +178,7 @@ const listenNodeContextMenuOnce = () => {
         'scale': '1',
         'opacity': '1',
         'transition':
-          'scale 96ms ease-in,' +
-          'opacity 96ms ease-in'
+          'scale 96ms ease-in, opacity 96ms ease-in'
       });
     });
   });
@@ -201,10 +187,7 @@ const listenNodeContextMenuOnce = () => {
 const closeRoomMenu = function() {
   vdcController.removeAnchor(contextmenuAnchorId);
   $('#vdc-wrapper').off('anchormove');
-  setupHoverListeners();
-  listenNodeClickOnce();
-  listenNodeContextMenuOnce();
-  vdcController.refreshNodehoverEvent();
+  resetListeners();
   requestAnimationFrame(() => {
     $('#room-menu-wrapper').css({
       'visibility': '',
