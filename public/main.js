@@ -58,6 +58,11 @@ const listenNodeClickOnce = () => {
       $('#vdc-wrapper').css('cursor', 'grabbing');
       $('#vdc-wrapper').off('nodehover');
       $('#vdc-wrapper').off('nodeunhover');
+      $('#vdc-wrapper').off('slothover');
+      $('#vdc-wrapper').off('slotunhover');
+      $('#vdc-wrapper').off('rackhover');
+      $('#vdc-wrapper').off('rackunhover');
+      $('#vdc-wrapper').off('click');
       $('#vdc-wrapper').off('nodecontextmenu');
   
       requestAnimationFrame(() => setLabelVisibility(false));
