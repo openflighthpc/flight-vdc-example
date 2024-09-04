@@ -1,4 +1,4 @@
-let grabbingNodeDetail = null, contextmenuNodeDetail = null, contextmenuAnchorId = null, hoveredClusterId = null;
+let grabbingNodeDetail = null, contextmenuNodeDetail = null, contextmenuAnchorId = null, hoveredClusterId = null, selectedCluster = null;
 
 // Function for managing label visibility
 const setLabelVisibility = (visible) => {
@@ -10,39 +10,102 @@ const setLabelVisibility = (visible) => {
   });
 };
 
-// Function for handling hover events
-const onHover = (e, text, trigger) => {
-  console.log(`Hover Event (${trigger}): ${JSON.stringify(e.detail)}`);
+
+// Function for handling rack hover events
+const onRackHover = (e, text, trigger) => {
+  console.log(`Rack Hover Event: ${JSON.stringify(e.detail)}`);
   $('#vdc-wrapper').css('cursor', 'grab');
   $('#room-label').text(text);
   requestAnimationFrame(() => setLabelVisibility(true));
-  if (trigger == 'rackhover' ) {
-    hoveredClusterId = text;
+  hoveredClusterId = text;
+};
+
+// Function for handling node hover events
+const onNodeHover = (e, text, trigger) => {
+  if (e.detail.clusterId === selectedCluster) {
+    console.log(`Node Hover Event: ${JSON.stringify(e.detail)}`);
+    $('#vdc-wrapper').css('cursor', 'grab');
+    $('#room-label').text(text);
+    requestAnimationFrame(() => setLabelVisibility(true));
+  } else {
+    console.log(`Ignoring Node Hover Event: ${JSON.stringify(e.detail)}`);
   }
 };
 
-// Function for handling unhover events
-const onUnhover = (e, trigger) => {
-  console.log(`Unhover Event (${trigger}): ${JSON.stringify(e.detail)}`);
+// Function for handling rack unhover events
+const onRackUnhover = (e, trigger) => {
+  console.log(`Rack Unhover Event: ${JSON.stringify(e.detail)}`);
   $('#vdc-wrapper').css('cursor', '');
   requestAnimationFrame(() => setLabelVisibility(false));
-  if (trigger == 'rackunhover' ) {
-    hoveredClusterId = null;
+  hoveredClusterId = null;
+};
+
+// Function for handling node unhover events
+const onNodeUnhover = (e, trigger) => {
+  if (e.detail.clusterId === selectedCluster) {
+    console.log(`Rack Unhover Event: ${JSON.stringify(e.detail)}`);
+    $('#vdc-wrapper').css('cursor', '');
+    requestAnimationFrame(() => setLabelVisibility(false));
+  } else {
+    console.log(`Ignoring Node Unhover Event: ${JSON.stringify(e.detail)}`);
   }
 };
 
-// Add listeners for hover and unhover events
-const setupHoverListeners = () => {
-  $('#vdc-wrapper').on('rackhover', (e) => onHover(e, e.detail.clusterId, 'rackhover'));
-  $('#vdc-wrapper').on('rackunhover', (e) => onUnhover(e, 'rackunhover'));
-  $('#vdc-wrapper').on('nodehover', (e) => onHover(e, e.detail.node.name, 'nodehover'));
-  $('#vdc-wrapper').on('nodeunhover', (e) => onUnhover(e, 'nodeunhover'));
+// Disable street view events (node: hover, unhover, click)
+const disableStreetViewEvents = () => {
+  console.log("Disabling street view events"); 
+  // Tidy up anything left around
+  $('#vdc-wrapper').trigger('nodeunhover');
+  $('#vdc-wrapper').trigger('slotunhover');
+  // Disable
+  $('#vdc-wrapper').off('nodehover');
+  $('#vdc-wrapper').off('nodeunhover');
+  $('#vdc-wrapper').off('slothover');
+  $('#vdc-wrapper').off('slotunhover');
+  $('#vdc-wrapper').off('nodecontextmenu');
+  $('#vdc-wrapper').off('click');
 
-  // Handle street view
+}
+
+const enableStreetViewEvents = () => {
+  $('#vdc-wrapper').on('nodehover', (e) => onNodeHover(e, e.detail.node.name, 'nodehover'));
+  $('#vdc-wrapper').on('nodeunhover', (e) => onRackUnhover(e, 'nodeunhover'));
+  listenNodeClickOnce();
+  listenNodeContextMenuOnce();
+  vdcController.refreshNodehoverEvent();
+}
+
+const goStreetView = (hoveredClusterId) => {
+  disableTopDownEvents();
+  console.log(`Requesting street view for ${hoveredClusterId}`);
+  vdcController.requestCameraStreetView(hoveredClusterId);
+  selectedCluster = hoveredClusterId;
+  enableStreetViewEvents();
+}
+
+// Disable top-down events (rack: hover, unhover, click)
+const disableTopDownEvents = () => {
+  console.log("Disabling rack view events"); 
+  // Tidy up anything left around
+  $('#vdc-wrapper').trigger('rackunhover');
+  // Disable
+  $('#vdc-wrapper').off('rackhover');
+  $('#vdc-wrapper').off('rackunhover');
+  $('#vdc-wrapper').off('click');
+}
+
+const goTopDownView = () => {
+  disableStreetViewEvents();
+  vdcController.requestCameraTopDownView();
+  selectedCluster = null;
+  $('#vdc-wrapper').on('rackhover', (e) => onRackHover(e, e.detail.clusterId, 'rackhover'));
+  $('#vdc-wrapper').on('rackunhover', (e) => onRackUnhover(e, 'rackunhover'));
+
+  // Handle street view transition
   $('#vdc-wrapper').on('click', (e) => {
     if (hoveredClusterId) {
       console.log('Requesting street view for ' + hoveredClusterId);
-      vdcController.requestCameraStreetView(hoveredClusterId);
+      goStreetView(hoveredClusterId);
     }
   });
 }
@@ -51,34 +114,29 @@ const listenNodeClickOnce = () => {
   $('#vdc-wrapper').one('vdcclick', (e) => {
     console.log('Node Click Event: ' + JSON.stringify(e.detail));
     if (e.detail.node) {
-
-      grabbingNodeDetail = e.detail.node.node;
-      grabbingNodeDetail.rackIndex = e.detail.node.rackIndex;
-  
-      $('#vdc-wrapper').css('cursor', 'grabbing');
-      $('#vdc-wrapper').off('nodehover');
-      $('#vdc-wrapper').off('nodeunhover');
-      $('#vdc-wrapper').off('slothover');
-      $('#vdc-wrapper').off('slotunhover');
-      $('#vdc-wrapper').off('rackhover');
-      $('#vdc-wrapper').off('rackunhover');
-      $('#vdc-wrapper').off('click');
-      $('#vdc-wrapper').off('nodecontextmenu');
-  
-      requestAnimationFrame(() => setLabelVisibility(false));
-  
-      vdcController.requestLiftNode(grabbingNodeDetail.id);
-  
-      $('#vdc-wrapper').on('slothover', (ev) => {
-        const nodeIds = vdcController.testSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber);
-        vdcController.highlightSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber, nodeIds.filter(id => id !== grabbingNodeDetail.id).length === 0);
-      }).on('slotunhover', (ev) => {
-        vdcController.unhighlightSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber);
-      })
-      listenSlotClickOnce();
-      vdcController.refreshSlothoverEvent();
-    } else {
-      listenNodeClickOnce();
+      if (e.detail.node.clusterId === selectedCluster) {
+        grabbingNodeDetail = e.detail.node.node;
+        grabbingNodeDetail.rackIndex = e.detail.node.rackIndex;
+    
+        $('#vdc-wrapper').css('cursor', 'grabbing');
+        disableStreetViewEvents();
+        disableTopDownEvents();
+    
+        requestAnimationFrame(() => setLabelVisibility(false));
+    
+        vdcController.requestLiftNode(grabbingNodeDetail.id);
+    
+        $('#vdc-wrapper').on('slothover', (ev) => {
+          const nodeIds = vdcController.testSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber);
+          vdcController.highlightSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber, nodeIds.filter(id => id !== grabbingNodeDetail.id).length === 0);
+        }).on('slotunhover', (ev) => {
+          vdcController.unhighlightSlots(ev.detail.clusterId, ev.detail.rackIndex, ev.detail.slotIndex, grabbingNodeDetail.uNumber);
+        })
+        $('#vdc-wrapper').one('vdcclick', handleSlotClick);
+        vdcController.refreshSlothoverEvent();
+      } else {
+        listenNodeClickOnce();
+      }
     }
   });
 }
@@ -108,26 +166,13 @@ const handleSlotClick = async (e) => {
       });
 
       if (response.ok) {
-        vdcController.requestMoveNode(grabbingNodeDetail.id, slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, resetListeners);
+        vdcController.requestMoveNode(grabbingNodeDetail.id, slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, enableStreetViewEvents);
         return;
       }
     }
   }
-  vdcController.requestPushinNode(grabbingNodeDetail.id, resetListeners);
+  vdcController.requestPushinNode(grabbingNodeDetail.id, enableStreetViewEvents);
 };
-
-// Helper for resetting listeners
-const resetListeners = () => {
-  setupHoverListeners();
-  listenNodeClickOnce();
-  listenNodeContextMenuOnce();
-  vdcController.refreshNodehoverEvent();
-};
-
-// Slot Click Listener
-const listenSlotClickOnce = () => {
-  $('#vdc-wrapper').one('vdcclick', handleSlotClick);
-}
 
 const listenNodeContextMenuOnce = () => {
   $('#vdc-wrapper').one('contextmenu', (e) => {
@@ -197,7 +242,7 @@ const listenNodeContextMenuOnce = () => {
 const closeRoomMenu = function() {
   vdcController.removeAnchor(contextmenuAnchorId);
   $('#vdc-wrapper').off('anchormove');
-  resetListeners();
+  enableStreetViewEvents();
   requestAnimationFrame(() => {
     $('#room-menu-wrapper').css({
       'visibility': '',
@@ -227,17 +272,18 @@ async function loadClusterData() {
   this.vdcController.updateClustersData(vdcRoomData);
 }
 
+
+// Setting up the initial Top Down view and listeners
 window.onload = async function () {
   // read dummy data
   const res = await fetch('/world');
   vdcRoomData = await res.json();
 
   globalThis.vdcController = globalThis.initVDC('vdc-wrapper', vdcRoomData);
-  const initialFocusingCluster = vdcRoomData.clusters[0];
-  if(initialFocusingCluster) {
-    globalThis.vdcController.requestCameraStreetView(initialFocusingCluster.id);
-  }
 
+  goTopDownView();
+
+  // Handle pending nodes 
   const pendingNodeIds = vdcRoomData.clusters
     .map(cluster => cluster.racks)
     .flat(Infinity)
@@ -256,6 +302,7 @@ window.onload = async function () {
       });
   });
 
+  // Room Navigation
   $('#vdc-wrapper').on('mousemove', (e) => {
     const roomWrapperDimensions = e.currentTarget.getBoundingClientRect();
     const labelTranslateX = e.clientX - roomWrapperDimensions.left;
@@ -315,10 +362,6 @@ window.onload = async function () {
       }
     }
   });
-
-  setupHoverListeners();
-  listenNodeClickOnce();
-  listenNodeContextMenuOnce();
 }
 setInterval(loadClusterData, 10000);
 
