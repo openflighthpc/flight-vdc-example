@@ -123,3 +123,7 @@ clusters:
 roomSize:
   horizontalTileNumber: 13
   verticalTileNumber: 11
+appearance: 
+  wallColour: "#a2a2a2"
+  ceilingColour: "#000000"
+  ceilingGridColour: "#d40000"
