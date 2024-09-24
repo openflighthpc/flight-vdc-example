@@ -24,6 +24,7 @@ const onRackHover = (e, text, trigger) => {
 const onNodeHover = (e, text, trigger) => {
   if (e.detail.clusterId === selectedCluster) {
     console.log(`Node Hover Event: ${JSON.stringify(e.detail)}`);
+    vdcController.outlineNode(e.detail.node.id);
     $('#vdc-wrapper').css('cursor', 'grab');
     $('#room-label').text(text);
     requestAnimationFrame(() => setLabelVisibility(true));
@@ -42,8 +43,9 @@ const onRackUnhover = (e, trigger) => {
 
 // Function for handling node unhover events
 const onNodeUnhover = (e, trigger) => {
-  if (e.detail.clusterId === selectedCluster) {
-    console.log(`Rack Unhover Event: ${JSON.stringify(e.detail)}`);
+  if (typeof e.detail !== 'undefined' && e.detail.clusterId === selectedCluster) {
+    console.log(`Node Unhover Event: ${JSON.stringify(e.detail)}`);
+    vdcController.unoutlineNode(e.detail.node.id);
     $('#vdc-wrapper').css('cursor', '');
     requestAnimationFrame(() => setLabelVisibility(false));
   } else {
@@ -69,7 +71,7 @@ const disableStreetViewEvents = () => {
 
 const enableStreetViewEvents = () => {
   $('#vdc-wrapper').on('nodehover', (e) => onNodeHover(e, e.detail.node.name, 'nodehover'));
-  $('#vdc-wrapper').on('nodeunhover', (e) => onRackUnhover(e, 'nodeunhover'));
+  $('#vdc-wrapper').on('nodeunhover', (e) => onNodeUnhover(e, 'nodeunhover'));
   listenNodeClickOnce();
   listenNodeContextMenuOnce();
   vdcController.refreshNodehoverEvent();
@@ -122,6 +124,7 @@ const listenNodeClickOnce = () => {
         disableStreetViewEvents();
         disableTopDownEvents();
     
+        vdcController.unoutlineNode(grabbingNodeDetail.id);
         requestAnimationFrame(() => setLabelVisibility(false));
     
         vdcController.requestLiftNode(grabbingNodeDetail.id);
@@ -208,6 +211,7 @@ const listenNodeContextMenuOnce = () => {
     });
     const listenCancelMenuOnce = () => {
       $('#vdc-wrapper').one('vdcclick', (_ev) => {
+        vdcController.unoutlineNode(e.detail.node.id);
         closeRoomMenu();
       });
     }

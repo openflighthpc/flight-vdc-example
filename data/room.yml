@@ -80,7 +80,7 @@ clusters:
       uNumber: 4
     - name: node12
       type: compute
-      index: 27
+      index: 12
       id: node12
       uNumber: 3
   - nodes:
@@ -123,7 +123,7 @@ clusters:
 roomSize:
   horizontalTileNumber: 13
   verticalTileNumber: 11
-appearance: 
+appearance:
   wallColour: "#a2a2a2"
   ceilingColour: "#000000"
   ceilingGridColour: "#d40000"
