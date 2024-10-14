@@ -83,6 +83,10 @@ clusters:
       index: 12
       id: node12
       uNumber: 3
+      datasets: 
+        sftest1:
+          colour: "#DEADCA"
+          label: "Something arbitrary"
   - nodes:
     - name: network2
       type: network

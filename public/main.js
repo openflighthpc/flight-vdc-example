@@ -144,6 +144,19 @@ const listenNodeClickOnce = () => {
   });
 }
 
+// Handle Data Overlay Toggle
+const dataOverlayHelper = () => {
+    console.log('Data overlay helper');
+    if (selectedCluster) {
+        console.log(`Displaying data for ${selectedCluster}`);
+        // Get array of all nodes for selectedCluster
+        // Iterate through nodes and turn on data display for them
+        // vdcController.addDataOverlay(name, data, options);
+    } else {
+        console.log('No cluster selected');
+    }
+}
+
 // Handle Slot Clicks
 const handleSlotClick = async (e) => {
   console.log('Slot Click Event: ' + JSON.stringify(e.detail));
