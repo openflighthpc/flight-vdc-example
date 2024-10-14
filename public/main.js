@@ -147,11 +147,20 @@ const listenNodeClickOnce = () => {
 // Handle Data Overlay Toggle
 const dataOverlayHelper = () => {
     console.log('Data overlay helper');
+    overlay = [{"colour": "#FF0000", "label": "colour for first box"},{"colour": "#00FF00", "label": "colour for second box"},{ "colour": "#FF00FF", "label": "colour for third box" }];
     if (selectedCluster) {
         console.log(`Displaying data for ${selectedCluster}`);
         // Get array of all nodes for selectedCluster
-        // Iterate through nodes and turn on data display for them
-        // vdcController.addDataOverlay(name, data, options);
+        const clusterInfo = vdcRoomData.clusters.find(cluster => cluster.id == selectedCluster);
+        // Iterate through racks and turn on data display for them
+        clusterInfo.racks.forEach((rack) => {
+            // Iterate through nodes and turn on data display for them
+            rack.nodes.forEach((node) => {
+                console.log(`Setting data overlay for ${node.id}`);
+                // Set data overlay for nodes
+                vdcController.addDataOverlay("demoOverlay", [{"node_id": node.id, "data": overlay }], {"type": "discrete"});
+            })
+        })
     } else {
         console.log('No cluster selected');
     }
