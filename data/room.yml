@@ -3,10 +3,10 @@ clusters:
 - id: my_cluster
   racks:
   - nodes:
-    - name: network-switch1
+    - name: network1
       type: network
       index: 41
-      id: network-switch1
+      id: network1
       uNumber: 1
     - name: login1
       type: login
