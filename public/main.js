@@ -59,6 +59,7 @@ const disableStreetViewEvents = () => {
   // Tidy up anything left around
   $('#vdc-wrapper').trigger('nodeunhover');
   $('#vdc-wrapper').trigger('slotunhover');
+  vdcController.clearDataOverlays();
   // Disable
   $('#vdc-wrapper').off('nodehover');
   $('#vdc-wrapper').off('nodeunhover');
