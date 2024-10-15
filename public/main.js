@@ -148,7 +148,10 @@ const listenNodeClickOnce = () => {
 // Handle Data Overlay Toggle
 const dataOverlayHelper = () => {
     console.log('Data overlay helper');
-    overlay = [{"colour": "#FF0000", "label": "colour for first box"},{"colour": "#00FF00", "label": "colour for second box"},{ "colour": "#FF00FF", "label": "colour for third box" }];
+    overlay1u = [{"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}];
+    overlay2u = [{"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#00FF00"},{"colour": "#FF00FF"}];
+    overlay3u = [{"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}];
+    overlay4u = [{"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#00FF00"}];
     if (selectedCluster) {
         console.log(`Displaying data for ${selectedCluster}`);
         // Get array of all nodes for selectedCluster
@@ -158,8 +161,21 @@ const dataOverlayHelper = () => {
             // Iterate through nodes and turn on data display for them
             rack.nodes.forEach((node) => {
                 console.log(`Setting data overlay for ${node.id}`);
-                // Set data overlay for nodes
-                vdcController.addDataOverlay("demoOverlay", [{"node_id": node.id, "data": overlay }], {"type": "discrete"});
+                // Set data overlay for nodes based on u heigh
+                switch(node.uNumber) {
+                    case 1: 
+                        vdcController.addDataOverlay("demoOverlay", [{"node_id": node.id, "data": overlay1u }], {"type": "discrete"});
+                        break;
+                    case 2:
+                        vdcController.addDataOverlay("demoOverlay", [{"node_id": node.id, "data": overlay2u }], {"type": "discrete"});
+                        break;
+                    case 3:
+                        vdcController.addDataOverlay("demoOverlay", [{"node_id": node.id, "data": overlay3u }], {"type": "discrete"});
+                        break;
+                    default: 
+                        vdcController.addDataOverlay("demoOverlay", [{"node_id": node.id, "data": overlay4u }], {"type": "discrete"});
+                        break;
+                }
             })
         })
     } else {
