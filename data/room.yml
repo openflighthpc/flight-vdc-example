@@ -83,10 +83,6 @@ clusters:
       index: 12
       id: node12
       uNumber: 3
-      datasets: 
-        sftest1:
-          colour: "#DEADCA"
-          label: "Something arbitrary"
   - nodes:
     - name: network2
       type: network
@@ -101,6 +97,7 @@ clusters:
   tileIndex:
     :x: 5
     :z: 5
+  colour: "#7709a0"
 - id: old_cluster
   racks:
   - nodes:
@@ -124,6 +121,7 @@ clusters:
   tileIndex:
     :x: 4
     :z: 1
+  colour: "#d3dd0c"
 roomSize:
   horizontalTileNumber: 13
   verticalTileNumber: 11
