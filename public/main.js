@@ -59,6 +59,7 @@ const disableStreetViewEvents = () => {
   // Tidy up anything left around
   $('#vdc-wrapper').trigger('nodeunhover');
   $('#vdc-wrapper').trigger('slotunhover');
+  vdcController.clearDataOverlays();
   // Disable
   $('#vdc-wrapper').off('nodehover');
   $('#vdc-wrapper').off('nodeunhover');
@@ -142,6 +143,44 @@ const listenNodeClickOnce = () => {
       }
     }
   });
+}
+
+// Handle Data Overlay Toggle
+const dataOverlayHelper = () => {
+    console.log('Data overlay helper');
+    overlay1u = [{"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}];
+    overlay2u = [{"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#00FF00"},{"colour": "#FF00FF"}];
+    overlay3u = [{"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}];
+    overlay4u = [{"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#FF0000"},{"colour": "#00FF00"},{"colour": "#FF00FF"}, {"colour": "#00FF00"}];
+    if (selectedCluster) {
+        console.log(`Displaying data for ${selectedCluster}`);
+        // Get array of all nodes for selectedCluster
+        const clusterInfo = vdcRoomData.clusters.find(cluster => cluster.id == selectedCluster);
+        // Iterate through racks and turn on data display for them
+        clusterInfo.racks.forEach((rack) => {
+            // Iterate through nodes and turn on data display for them
+            rack.nodes.forEach((node) => {
+                console.log(`Setting data overlay for ${node.id}`);
+                // Set data overlay for nodes based on u heigh
+                switch(node.uNumber) {
+                    case 1: 
+                        vdcController.addDataOverlay("demoOverlay", [{"node_id": node.id, "data": overlay1u }], {"type": "discrete"});
+                        break;
+                    case 2:
+                        vdcController.addDataOverlay("demoOverlay", [{"node_id": node.id, "data": overlay2u }], {"type": "discrete"});
+                        break;
+                    case 3:
+                        vdcController.addDataOverlay("demoOverlay", [{"node_id": node.id, "data": overlay3u }], {"type": "discrete"});
+                        break;
+                    default: 
+                        vdcController.addDataOverlay("demoOverlay", [{"node_id": node.id, "data": overlay4u }], {"type": "discrete"});
+                        break;
+                }
+            })
+        })
+    } else {
+        console.log('No cluster selected');
+    }
 }
 
 // Handle Slot Clicks
