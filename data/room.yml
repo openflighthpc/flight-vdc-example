@@ -1,4 +1,29 @@
 ---
+clustersCondensed:
+- id: condensed_cluster
+  racks:
+  - nodetypes:
+    - type: compute
+      number: 36
+      startIndex: 41
+      uNumber: 1
+    - type: compute
+      number: 3
+      startIndex: 5
+      uNumber: 2
+  - nodetypes:
+    - type: compute
+      number: 16
+      startIndex: 41
+      uNumber: 1
+    - type: storage
+      number: 4
+      startIndex: 15
+      uNumber: 4
+  tileIndex:
+    :x: 1
+    :z: 1
+  colour: "#74C6FF"
 clusters:
 - id: my_cluster
   racks:

@@ -7,6 +7,7 @@ For testing [Flight VDC Core](https://github.com/openflighthpc/flight-vdc-core).
 ```
 # Initialise VDC library
 git submodule init
+git submodule update
 
 # Install Web App Dependencies
 bundle install

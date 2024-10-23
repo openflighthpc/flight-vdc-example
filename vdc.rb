@@ -8,9 +8,33 @@ end
 
 get '/world' do
   room = YAML.load_file(File.join(Sinatra::Application.root, 'data', 'room.yml'))
+  room['clusters'] ||= []
   node_ids = room['clusters'].map {|cluster| cluster['racks']}.flatten.map {|rack| rack['nodes']}.flatten.map{|node| node['id']}
   node_statuses = getNodeStatuses(node_ids)
   room['clusters'].each {|cluster| cluster['racks'].each {|rack| rack['nodes'].each {|node| node['status'] = node_statuses[node['id']]}}}
+
+  unless room['clustersCondensed'].nil?
+    room['clustersCondensed'].each do |cluster|
+      cluster['racks'].each_with_index.map do |rack, index|
+        rack['nodes'] = []
+        rack['nodetypes'].each do |nodetype|
+          nodetype['number'].times do |n|
+            slot_no = nodetype['startIndex'] - n * nodetype['uNumber']
+            node_id = "#{nodetype['type']}_rack#{index}_#{slot_no}"
+            rack['nodes'] << {
+              name: node_id,
+              type: nodetype['type'],
+              index: slot_no,
+              id: node_id,
+              uNumber: nodetype['uNumber'],
+              status: getNodeStatuses([node_id])[node_id],
+            }
+          end
+        end
+      end
+      room['clusters'] << cluster
+    end
+  end
   return room.to_json
 end
 
