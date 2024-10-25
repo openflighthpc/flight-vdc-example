@@ -7,6 +7,7 @@ For testing [Flight VDC Core](https://github.com/openflighthpc/flight-vdc-core).
 ```
 # Initialise VDC library
 git submodule init
+git submodule update
 
 # Install Web App Dependencies
 bundle install
@@ -27,3 +28,5 @@ Visit http://localhost:4567 and see the following:
 - Zoom in with mouse wheel (quite dodgy, not recommended) 
 - Dynamically reloading node layout (any changes to `room.yml` are reflected in front-end session, checked every 10s) 
 - Display data overviews for currently selected cluster with button (does nothing in top-down view)
+- Rapidly create clusters using "condensed" formatting
+    - Note that this has some restrictions; nodes cannot be moved, nodes cannot be explicitly named
