@@ -194,8 +194,12 @@ const handleSlotClick = async (e) => {
 
     const nodeIds = vdcController.testSlots(slotClickDetail.clusterId, slotClickDetail.rackIndex, slotClickDetail.slotIndex, grabbingNodeDetail.uNumber);
 
-    // Only move if node not being placed back in same place
-    if ((slotClickDetail.slotIndex !== grabbingNodeDetail.index || slotClickDetail.rackIndex !== grabbingNodeDetail.rackIndex) && nodeIds.filter(id => id !== grabbingNodeDetail.id).length === 0) {
+    // Disallow moving if a "condensed cluster" 
+    if (vdcRoomData.clustersCondensed.find(cluster => cluster.id === slotClickDetail.clusterId)) {
+        console.log(`${slotClickDetail.clusterId} is a condensed cluster, not allowing movement`);
+    }
+    // Only move if node not being placed back in same place 
+      else if ((slotClickDetail.slotIndex !== grabbingNodeDetail.index || slotClickDetail.rackIndex !== grabbingNodeDetail.rackIndex) && nodeIds.filter(id => id !== grabbingNodeDetail.id).length === 0) {
       const response = await fetch('/node', {
         method: 'POST',
         body: JSON.stringify({
