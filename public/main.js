@@ -113,6 +113,23 @@ const goTopDownView = () => {
   });
 }
 
+// Treated same as top down view
+const goFaceOnView = () => {
+  disableStreetViewEvents();
+  vdcController.requestCameraFaceOnView();
+  selectedCluster = null;
+  $('#vdc-wrapper').on('rackhover', (e) => onRackHover(e, e.detail.clusterId, 'rackhover'));
+  $('#vdc-wrapper').on('rackunhover', (e) => onRackUnhover(e, 'rackunhover'));
+
+  // Handle street view transition
+  $('#vdc-wrapper').on('click', (e) => {
+    if (hoveredClusterId) {
+      console.log('Requesting street view for ' + hoveredClusterId);
+      goStreetView(hoveredClusterId);
+    }
+  });
+}
+
 const listenNodeClickOnce = () => {
   $('#vdc-wrapper').one('vdcclick', (e) => {
     console.log('Node Click Event: ' + JSON.stringify(e.detail));
