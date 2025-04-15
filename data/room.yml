@@ -38,6 +38,9 @@ clusters:
       index: 40
       id: login1
       uNumber: 1
+      metadata:
+        - vnc: true
+        - web-suite: false
     - name: node01
       type: compute
       index: 39
